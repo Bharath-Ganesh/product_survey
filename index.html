@@ -343,6 +343,7 @@
       thankYouScreen.classList.remove("hidden");
       statusEl.className = "";
       statusEl.style.display = "none";
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
     function showForm() {
@@ -355,6 +356,15 @@
     }
 
     submitAnotherBtn.addEventListener("click", showForm);
+
+    function isSavedResponse(result) {
+      if (!result.success) return false;
+      if (result.saved === true) return true;
+      // Health-check-only response: success + message, but no row written
+      if (result.message) return false;
+      // Working deployments return { success: true } after a real save
+      return true;
+    }
 
     async function submitToGoogleSheets(payload) {
       const url = `${GOOGLE_SCRIPT_URL}?payload=${encodeURIComponent(JSON.stringify(payload))}`;
@@ -373,7 +383,7 @@
         throw new Error("Unexpected response from Google Script.");
       }
 
-      if (!result.success || !result.saved) {
+      if (!isSavedResponse(result)) {
         if (result.message) {
           throw new Error(
             "Response was not saved to Google Sheets. Redeploy Apps Script with the latest Code.gs (New version → Deploy)."
