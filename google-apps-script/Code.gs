@@ -24,7 +24,7 @@ function doGet(e) {
   try {
     if (e && e.parameter && e.parameter.payload) {
       saveSubmission(JSON.parse(e.parameter.payload));
-      return jsonResponse({ success: true });
+      return jsonResponse({ success: true, saved: true });
     }
     return jsonResponse({ success: true, message: "Product Survey API is running." });
   } catch (err) {
@@ -35,7 +35,7 @@ function doGet(e) {
 function doPost(e) {
   try {
     saveSubmission(parsePayload(e));
-    return jsonResponse({ success: true });
+    return jsonResponse({ success: true, saved: true });
   } catch (err) {
     return jsonResponse({ success: false, error: String(err) });
   }

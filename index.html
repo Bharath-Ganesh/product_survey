@@ -373,7 +373,12 @@
         throw new Error("Unexpected response from Google Script.");
       }
 
-      if (!result.success) {
+      if (!result.success || !result.saved) {
+        if (result.message) {
+          throw new Error(
+            "Response was not saved to Google Sheets. Redeploy Apps Script with the latest Code.gs (New version → Deploy)."
+          );
+        }
         throw new Error(result.error || "Failed to submit");
       }
 
