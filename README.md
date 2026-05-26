@@ -4,9 +4,13 @@ Static survey page that saves responses to **your Google Sheet**. Deploy on Verc
 
 ## 1. Connect Google Sheets (one-time, ~5 minutes)
 
-### Create the sheet
+### Use your sheet
 
-1. Open [Google Sheets](https://sheets.google.com) and create a new spreadsheet (e.g. **Product Survey Responses**).
+Your responses spreadsheet:
+
+**[Product Survey (Google Sheets)](https://docs.google.com/spreadsheets/d/1Z2LFlWj8og9RPy2_OdzSa35IKkUDh61MXjQfk8WQRWE/edit)**
+
+1. Open that sheet (you need **Editor** access, not view-only).
 2. Keep the default first tab (Sheet1).
 
 ### Add the script

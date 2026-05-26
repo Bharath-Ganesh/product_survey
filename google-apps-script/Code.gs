@@ -1,9 +1,11 @@
 /**
  * Product Survey — Google Sheets backend
  *
+ * Bound spreadsheet:
+ * https://docs.google.com/spreadsheets/d/1Z2LFlWj8og9RPy2_OdzSa35IKkUDh61MXjQfk8WQRWE/edit
+ *
  * Setup:
- * 1. Create a new Google Sheet.
- * 2. Extensions → Apps Script → paste this file → Save.
+ * 1. Open that sheet → Extensions → Apps Script → paste this file → Save.
  * 3. Deploy → New deployment → Web app.
  *    - Execute as: Me
  *    - Who has access: Anyone
