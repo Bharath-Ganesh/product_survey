@@ -357,13 +357,8 @@
     submitAnotherBtn.addEventListener("click", showForm);
 
     async function submitToGoogleSheets(payload) {
-      const body = new URLSearchParams();
-      body.append("payload", JSON.stringify(payload));
-
-      const response = await fetch(GOOGLE_SCRIPT_URL, {
-        method: "POST",
-        body: body
-      });
+      const url = `${GOOGLE_SCRIPT_URL}?payload=${encodeURIComponent(JSON.stringify(payload))}`;
+      const response = await fetch(url);
 
       const text = await response.text();
       let result = {};

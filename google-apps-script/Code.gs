@@ -4,7 +4,7 @@
  * Spreadsheet:
  * https://docs.google.com/spreadsheets/d/1Z2LFlWj8og9RPy2_OdzSa35IKkUDh61MXjQfk8WQRWE/edit
  *
- * Deploy: Web app → Execute as: Me → Who has access: Anyone
+ * Deploy: Web app → Execute as: Me → Who has access: Anyone → New version
  */
 
 var SPREADSHEET_ID = "1Z2LFlWj8og9RPy2_OdzSa35IKkUDh61MXjQfk8WQRWE";
@@ -20,39 +20,49 @@ var HEADERS = [
   "Other Feature Ideas"
 ];
 
+function doGet(e) {
+  try {
+    if (e && e.parameter && e.parameter.payload) {
+      saveSubmission(JSON.parse(e.parameter.payload));
+      return jsonResponse({ success: true });
+    }
+    return jsonResponse({ success: true, message: "Product Survey API is running." });
+  } catch (err) {
+    return jsonResponse({ success: false, error: String(err) });
+  }
+}
+
 function doPost(e) {
   try {
-    var data = parsePayload(e);
-    var sheet = getSheet();
-    ensureHeaders(sheet);
-
-    var features = Array.isArray(data.features)
-      ? data.features.join(", ")
-      : (data.features || "");
-
-    var submittedAt = data.submitted_at
-      ? new Date(data.submitted_at)
-      : new Date();
-
-    sheet.appendRow([
-      submittedAt,
-      data.name || "",
-      data.location_country || "",
-      data.location || "",
-      data.concierge_interest || "",
-      features,
-      data.current_handling || "",
-      data.other_features || ""
-    ]);
-
+    saveSubmission(parsePayload(e));
     return jsonResponse({ success: true });
   } catch (err) {
     return jsonResponse({ success: false, error: String(err) });
   }
 }
 
-function doGet() {
-  return jsonResponse({ success: true, message: "Product Survey API is running." });
+function saveSubmission(data) {
+  var sheet = getSheet();
+  ensureHeaders(sheet);
+
+  var features = Array.isArray(data.features)
+    ? data.features.join(", ")
+    : (data.features || "");
+
+  var submittedAt = data.submitted_at
+    ? new Date(data.submitted_at)
+    : new Date();
+
+  sheet.appendRow([
+    submittedAt,
+    data.name || "",
+    data.location_country || "",
+    data.location || "",
+    data.concierge_interest || "",
+    features,
+    data.current_handling || "",
+    data.other_features || ""
+  ]);
 }
 
 function parsePayload(e) {
