@@ -157,6 +157,46 @@
       background: var(--error-bg);
       color: var(--error-text);
     }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .thank-you {
+      text-align: center;
+      padding: 32px 16px;
+    }
+
+    .thank-you-icon {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 16px;
+      border-radius: 50%;
+      background: var(--success-bg);
+      color: var(--success-text);
+      font-size: 2rem;
+      line-height: 64px;
+    }
+
+    .thank-you h2 {
+      margin: 0 0 8px;
+      font-size: 1.4rem;
+    }
+
+    .thank-you p {
+      margin: 0 0 20px;
+      color: var(--muted);
+    }
+
+    .thank-you button {
+      background: transparent;
+      color: var(--brand);
+      border: 1px solid var(--brand);
+    }
+
+    .thank-you button:hover {
+      background: #eef4fd;
+    }
   </style>
 </head>
 <body>
@@ -164,6 +204,13 @@
     <section class="card">
       <h1>Product Survey</h1>
       <p class="subtitle">We are collecting feedback to shape our product. This takes less than 2 minutes.</p>
+
+      <div id="thankYouScreen" class="thank-you hidden" aria-live="polite">
+        <div class="thank-you-icon" aria-hidden="true">✓</div>
+        <h2>Thank you!</h2>
+        <p>Your response has been recorded. We appreciate your feedback.</p>
+        <button type="button" id="submitAnotherBtn">Submit another response</button>
+      </div>
 
       <form id="surveyForm">
         <fieldset>
@@ -256,7 +303,11 @@
   <script>
     const form = document.getElementById("surveyForm");
     const statusEl = document.getElementById("status");
+    const thankYouScreen = document.getElementById("thankYouScreen");
+    const submitAnotherBtn = document.getElementById("submitAnotherBtn");
     const submitBtn = document.getElementById("submitBtn");
+    const surveyTitle = document.querySelector(".card > h1");
+    const surveySubtitle = document.querySelector(".card > .subtitle");
     const locationSelect = document.getElementById("location_country");
     const otherCountryWrap = document.getElementById("otherCountryWrap");
     const otherCountryInput = document.getElementById("other_country");
@@ -284,6 +335,55 @@
     }
 
     locationSelect.addEventListener("change", toggleOtherCountry);
+
+    function showThankYou() {
+      form.classList.add("hidden");
+      if (surveyTitle) surveyTitle.classList.add("hidden");
+      if (surveySubtitle) surveySubtitle.classList.add("hidden");
+      thankYouScreen.classList.remove("hidden");
+      statusEl.className = "";
+      statusEl.style.display = "none";
+    }
+
+    function showForm() {
+      form.classList.remove("hidden");
+      if (surveyTitle) surveyTitle.classList.remove("hidden");
+      if (surveySubtitle) surveySubtitle.classList.remove("hidden");
+      thankYouScreen.classList.add("hidden");
+      form.reset();
+      toggleOtherCountry();
+    }
+
+    submitAnotherBtn.addEventListener("click", showForm);
+
+    async function submitToGoogleSheets(payload) {
+      const body = new URLSearchParams();
+      body.append("payload", JSON.stringify(payload));
+
+      const response = await fetch(GOOGLE_SCRIPT_URL, {
+        method: "POST",
+        body: body
+      });
+
+      const text = await response.text();
+      let result = {};
+      try {
+        result = JSON.parse(text);
+      } catch (parseError) {
+        if (text.includes("Access Denied") || text.includes("You need access")) {
+          throw new Error(
+            "Google Script access denied. Redeploy the web app with Who has access set to Anyone."
+          );
+        }
+        throw new Error("Unexpected response from Google Script.");
+      }
+
+      if (!result.success) {
+        throw new Error(result.error || "Failed to submit");
+      }
+
+      return result;
+    }
 
     form.addEventListener("submit", async (event) => {
       event.preventDefault();
@@ -331,26 +431,10 @@
       submitBtn.disabled = true;
 
       try {
-        const response = await fetch(GOOGLE_SCRIPT_URL, {
-          method: "POST",
-          headers: {
-            "Content-Type": "text/plain;charset=utf-8"
-          },
-          body: JSON.stringify(payload)
-        });
-
-        const result = await response.json();
-
-        if (!response.ok || !result.success) {
-          throw new Error(result.error || "Failed to submit");
-        }
-
-        form.reset();
-        toggleOtherCountry();
-        statusEl.textContent = "Thank you! Your response has been submitted.";
-        statusEl.className = "success";
+        await submitToGoogleSheets(payload);
+        showThankYou();
       } catch (error) {
-        statusEl.textContent = "Submission failed. Please try again.";
+        statusEl.textContent = error.message || "Submission failed. Please try again.";
         statusEl.className = "error";
       } finally {
         submitBtn.disabled = false;

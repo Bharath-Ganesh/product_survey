@@ -1,16 +1,13 @@
 /**
  * Product Survey — Google Sheets backend
  *
- * Bound spreadsheet:
+ * Spreadsheet:
  * https://docs.google.com/spreadsheets/d/1Z2LFlWj8og9RPy2_OdzSa35IKkUDh61MXjQfk8WQRWE/edit
  *
- * Setup:
- * 1. Open that sheet → Extensions → Apps Script → paste this file → Save.
- * 3. Deploy → New deployment → Web app.
- *    - Execute as: Me
- *    - Who has access: Anyone
- * 4. Copy the Web app URL into index.html (GOOGLE_SCRIPT_URL).
+ * Deploy: Web app → Execute as: Me → Who has access: Anyone
  */
+
+var SPREADSHEET_ID = "1Z2LFlWj8og9RPy2_OdzSa35IKkUDh61MXjQfk8WQRWE";
 
 var HEADERS = [
   "Submitted At",
@@ -25,11 +22,13 @@ var HEADERS = [
 
 function doPost(e) {
   try {
-    var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheets()[0];
+    var data = parsePayload(e);
+    var sheet = getSheet();
     ensureHeaders(sheet);
 
-    var data = JSON.parse(e.postData.contents);
-    var features = Array.isArray(data.features) ? data.features.join(", ") : (data.features || "");
+    var features = Array.isArray(data.features)
+      ? data.features.join(", ")
+      : (data.features || "");
 
     var submittedAt = data.submitted_at
       ? new Date(data.submitted_at)
@@ -50,6 +49,24 @@ function doPost(e) {
   } catch (err) {
     return jsonResponse({ success: false, error: String(err) });
   }
+}
+
+function doGet() {
+  return jsonResponse({ success: true, message: "Product Survey API is running." });
+}
+
+function parsePayload(e) {
+  if (e && e.parameter && e.parameter.payload) {
+    return JSON.parse(e.parameter.payload);
+  }
+  if (e && e.postData && e.postData.contents) {
+    return JSON.parse(e.postData.contents);
+  }
+  throw new Error("No payload received.");
+}
+
+function getSheet() {
+  return SpreadsheetApp.openById(SPREADSHEET_ID).getSheets()[0];
 }
 
 function ensureHeaders(sheet) {

@@ -25,8 +25,10 @@ Your responses spreadsheet:
 2. Click the gear icon → choose **Web app**.
 3. Set:
    - **Execute as:** Me
-   - **Who has access:** Anyone
+   - **Who has access:** **Anyone** (required — not “Only myself”)
 4. Click **Deploy** and authorize when prompted.
+
+If submissions fail with “access denied”, open **Deploy → Manage deployments → Edit → set Who has access to Anyone → New version → Deploy**.
 5. Copy the **Web app URL** (looks like `https://script.google.com/macros/s/...../exec`).
 
 ### Link the survey to your sheet
