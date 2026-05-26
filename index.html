@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Product Survey</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --text: #1a2333;
+      --muted: #5b667a;
+      --brand: #2d6cdf;
+      --brand-hover: #2255b2;
+      --border: #d8dfed;
+      --success-bg: #e9f7ef;
+      --success-text: #155724;
+      --error-bg: #fdeaea;
+      --error-text: #8a1c1c;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 28px 16px 48px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(32, 63, 120, 0.08);
+      padding: 24px;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 1.5rem;
+    }
+
+    .subtitle {
+      margin: 0 0 24px;
+      color: var(--muted);
+    }
+
+    fieldset {
+      border: 0;
+      margin: 0 0 20px;
+      padding: 0;
+    }
+
+    legend {
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .hint {
+      margin: 0 0 10px;
+      font-size: 0.92rem;
+      color: var(--muted);
+    }
+
+    label {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      margin: 8px 0;
+      cursor: pointer;
+    }
+
+    label.field-label {
+      display: block;
+      margin-bottom: 8px;
+      cursor: default;
+      font-weight: 600;
+    }
+
+    input[type="text"],
+    select,
+    textarea {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 0.98rem;
+      font: inherit;
+      background: #fff;
+    }
+
+    textarea {
+      min-height: 96px;
+      resize: vertical;
+    }
+
+    .other-country {
+      margin-top: 10px;
+      display: none;
+    }
+
+    .other-country.visible {
+      display: block;
+    }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin-top: 14px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 8px;
+      background: var(--brand);
+      color: #fff;
+      font-size: 0.98rem;
+      padding: 10px 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: var(--brand-hover);
+    }
+
+    button:disabled {
+      opacity: 0.7;
+      cursor: wait;
+    }
+
+    #status {
+      margin-top: 14px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      display: none;
+    }
+
+    #status.success {
+      display: block;
+      background: var(--success-bg);
+      color: var(--success-text);
+    }
+
+    #status.error {
+      display: block;
+      background: var(--error-bg);
+      color: var(--error-text);
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <section class="card">
+      <h1>Product Survey</h1>
+      <p class="subtitle">We are collecting feedback to shape our product. This takes less than 2 minutes.</p>
+
+      <form id="surveyForm">
+        <fieldset>
+          <legend>Your name</legend>
+          <input type="text" name="name" placeholder="Enter your name" required />
+        </fieldset>
+
+        <fieldset>
+          <legend>Your location</legend>
+          <label class="field-label" for="location_country">Country</label>
+          <select id="location_country" name="location_country" required>
+            <option value="" disabled selected>Select your country</option>
+            <option value="US">US</option>
+            <option value="Germany">Germany</option>
+            <option value="UK">UK</option>
+            <option value="Canada">Canada</option>
+            <option value="UAE">UAE</option>
+            <option value="Ireland">Ireland</option>
+            <option value="Others">Others</option>
+          </select>
+          <div id="otherCountryWrap" class="other-country">
+            <label class="field-label" for="other_country">Please specify your country</label>
+            <input type="text" id="other_country" name="other_country" placeholder="Enter country name" />
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>1) Would you be interested in a service app for elders in Kerala?</legend>
+          <p class="hint">Example: one app to book doctor visits, arrange transport, and get medicine reminders for parents.</p>
+          <label>
+            <input type="radio" name="concierge_interest" value="Yes" required />
+            <span>Yes</span>
+          </label>
+          <label>
+            <input type="radio" name="concierge_interest" value="No" />
+            <span>No</span>
+          </label>
+          <label>
+            <input type="radio" name="concierge_interest" value="Maybe" />
+            <span>Maybe</span>
+          </label>
+        </fieldset>
+
+        <fieldset>
+          <legend>2) What related features would you be interested in?</legend>
+          <p class="hint">Choose all that apply:</p>
+          <label><input type="checkbox" name="features" value="Medication reminders" /> <span>Medication reminders</span></label>
+          <label><input type="checkbox" name="features" value="Doctor appointment scheduling" /> <span>Doctor appointment scheduling</span></label>
+          <label><input type="checkbox" name="features" value="Emergency support line" /> <span>Emergency support line</span></label>
+          <label><input type="checkbox" name="features" value="Daily wellness check-ins" /> <span>Daily wellness check-ins</span></label>
+          <label><input type="checkbox" name="features" value="Transportation assistance" /> <span>Transportation assistance</span></label>
+          <label><input type="checkbox" name="features" value="Family updates dashboard" /> <span>Family updates dashboard</span></label>
+        </fieldset>
+
+        <fieldset>
+          <legend>3) How are you currently handling such elder-care needs?</legend>
+          <p class="hint">Example: family members coordinate doctor visits and medicine pickup by phone calls or WhatsApp.</p>
+          <label>
+            <input type="radio" name="current_handling" value="I handle it myself daily" required />
+            <span>I handle it myself daily</span>
+          </label>
+          <label>
+            <input type="radio" name="current_handling" value="Family members coordinate together" />
+            <span>Family members coordinate together</span>
+          </label>
+          <label>
+            <input type="radio" name="current_handling" value="Paid caregiver or agency support" />
+            <span>Paid caregiver or agency support</span>
+          </label>
+          <label>
+            <input type="radio" name="current_handling" value="Not handled consistently right now" />
+            <span>Not handled consistently right now</span>
+          </label>
+        </fieldset>
+
+        <fieldset>
+          <legend>Any additional feature ideas?</legend>
+          <textarea name="other_features" placeholder="Write your ideas here..."></textarea>
+        </fieldset>
+
+        <div class="actions">
+          <button type="submit" id="submitBtn">Submit response</button>
+        </div>
+
+        <p id="status" aria-live="polite"></p>
+      </form>
+    </section>
+  </main>
+
+  <script>
+    const form = document.getElementById("surveyForm");
+    const statusEl = document.getElementById("status");
+    const submitBtn = document.getElementById("submitBtn");
+    const locationSelect = document.getElementById("location_country");
+    const otherCountryWrap = document.getElementById("otherCountryWrap");
+    const otherCountryInput = document.getElementById("other_country");
+
+    const FORMSPREE_ENDPOINT = "https://formspree.io/f/xeedrpdl";
+
+    function toggleOtherCountry() {
+      const isOthers = locationSelect.value === "Others";
+      otherCountryWrap.classList.toggle("visible", isOthers);
+      otherCountryInput.required = isOthers;
+      if (!isOthers) {
+        otherCountryInput.value = "";
+      }
+    }
+
+    function resolveLocation(formData) {
+      const country = (formData.get("location_country") || "").toString();
+      if (country === "Others") {
+        const other = (formData.get("other_country") || "").toString().trim();
+        return other ? `Others: ${other}` : "";
+      }
+      return country;
+    }
+
+    locationSelect.addEventListener("change", toggleOtherCountry);
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      statusEl.className = "";
+      statusEl.style.display = "none";
+
+      const formData = new FormData(form);
+      const location = resolveLocation(formData);
+
+      if (!location) {
+        statusEl.textContent = "Please select your country, or specify it if you chose Others.";
+        statusEl.className = "error";
+        return;
+      }
+
+      const payload = {
+        submitted_at: new Date().toISOString(),
+        name: (formData.get("name") || "").toString().trim(),
+        location_country: (formData.get("location_country") || "").toString(),
+        location: location,
+        concierge_interest: (formData.get("concierge_interest") || "").toString(),
+        current_handling: (formData.get("current_handling") || "").toString(),
+        features: formData.getAll("features"),
+        other_features: (formData.get("other_features") || "").toString().trim()
+      };
+
+      if (!payload.concierge_interest) {
+        statusEl.textContent = "Please answer question 1 before submitting.";
+        statusEl.className = "error";
+        return;
+      }
+
+      if (!payload.current_handling) {
+        statusEl.textContent = "Please answer question 3 before submitting.";
+        statusEl.className = "error";
+        return;
+      }
+
+      submitBtn.disabled = true;
+
+      try {
+        const response = await fetch(FORMSPREE_ENDPOINT, {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to submit");
+        }
+
+        form.reset();
+        toggleOtherCountry();
+        statusEl.textContent = "Thank you! Your response has been submitted.";
+        statusEl.className = "success";
+      } catch (error) {
+        statusEl.textContent = "Submission failed. Please try again.";
+        statusEl.className = "error";
+      } finally {
+        submitBtn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
