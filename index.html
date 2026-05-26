@@ -261,7 +261,8 @@
     const otherCountryWrap = document.getElementById("otherCountryWrap");
     const otherCountryInput = document.getElementById("other_country");
 
-    const FORMSPREE_ENDPOINT = "https://formspree.io/f/xeedrpdl";
+    // Paste your Google Apps Script web app URL after deploying (see README).
+    const GOOGLE_SCRIPT_URL = "";
 
     function toggleOtherCountry() {
       const isOthers = locationSelect.value === "Others";
@@ -320,20 +321,27 @@
         return;
       }
 
+      if (!GOOGLE_SCRIPT_URL) {
+        statusEl.textContent = "Survey is not connected to Google Sheets yet. Add your Apps Script URL in index.html.";
+        statusEl.className = "error";
+        return;
+      }
+
       submitBtn.disabled = true;
 
       try {
-        const response = await fetch(FORMSPREE_ENDPOINT, {
+        const response = await fetch(GOOGLE_SCRIPT_URL, {
           method: "POST",
           headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json"
+            "Content-Type": "text/plain;charset=utf-8"
           },
           body: JSON.stringify(payload)
         });
 
-        if (!response.ok) {
-          throw new Error("Failed to submit");
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+          throw new Error(result.error || "Failed to submit");
         }
 
         form.reset();

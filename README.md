@@ -1,24 +1,57 @@
 # Product Survey
 
-Static survey page for collecting product feedback. Submissions are sent to [Formspree](https://formspree.io/f/xeedrpdl).
+Static survey page that saves responses to **your Google Sheet**. Deploy on Vercel and share the link with friends.
 
-## Deploy on Vercel (recommended)
+## 1. Connect Google Sheets (one-time, ~5 minutes)
 
-1. Push this repo to GitHub: `git@github.com:Bharath-Ganesh/product_survey.git`
-2. Go to [vercel.com](https://vercel.com) and sign in with GitHub.
-3. **Add New Project** → import `Bharath-Ganesh/product_survey`.
-4. Leave defaults (framework: Other, no build command) and click **Deploy**.
-5. Share the generated URL (e.g. `https://product-survey-xxx.vercel.app`).
+### Create the sheet
 
-No server or database required. Vercel serves `index.html` as a static site.
+1. Open [Google Sheets](https://sheets.google.com) and create a new spreadsheet (e.g. **Product Survey Responses**).
+2. Keep the default first tab (Sheet1).
 
-### Deploy via Vercel CLI
+### Add the script
 
-```bash
-npm i -g vercel
-cd product_survey
-vercel
+1. In the sheet: **Extensions → Apps Script**.
+2. Delete any default code and paste the contents of [`google-apps-script/Code.gs`](google-apps-script/Code.gs).
+3. Click **Save** (name the project e.g. `Product Survey`).
+
+### Deploy as web app
+
+1. Click **Deploy → New deployment**.
+2. Click the gear icon → choose **Web app**.
+3. Set:
+   - **Execute as:** Me
+   - **Who has access:** Anyone
+4. Click **Deploy** and authorize when prompted.
+5. Copy the **Web app URL** (looks like `https://script.google.com/macros/s/...../exec`).
+
+### Link the survey to your sheet
+
+1. Open `index.html` in this repo.
+2. Set your URL:
+
+```js
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/YOUR_ID/exec";
 ```
+
+3. Commit and push (or redeploy on Vercel).
+
+**Important:** If you change the script later, use **Deploy → Manage deployments → Edit → New version → Deploy**. The URL stays the same; only the version updates.
+
+## 2. Deploy on Vercel
+
+1. Repo: [github.com/Bharath-Ganesh/product_survey](https://github.com/Bharath-Ganesh/product_survey)
+2. [vercel.com](https://vercel.com) → **Add New Project** → import the repo.
+3. No build command needed → **Deploy**.
+4. Share your Vercel URL.
+
+After each change to `index.html`, push to `main` — Vercel redeploys automatically.
+
+## 3. View and export your data
+
+- Open your Google Sheet anytime — each submission is a new row.
+- **File → Download → Microsoft Excel (.xlsx)** whenever you want an Excel file.
+- You own the sheet: share access, filter, charts, backups — full control.
 
 ## Run locally
 
@@ -26,20 +59,21 @@ vercel
 python3 -m http.server 8080
 ```
 
-Open `http://localhost:8080`
+Open `http://localhost:8080` (submissions still go to Google Sheets if `GOOGLE_SCRIPT_URL` is set).
 
-## Formspree volume (100–200 responses)
+## Sheet columns
 
-The free Formspree plan has monthly submission limits. For **100–200 responses**, confirm your plan supports that volume on the [Formspree pricing](https://formspree.io/plans) page and upgrade if needed.
+| Column | Source |
+|--------|--------|
+| Submitted At | Timestamp |
+| Name | Required |
+| Location Country | Dropdown value |
+| Location | Country or `Others: …` |
+| Kerala App Interest | Yes / No / Maybe |
+| Features | Comma-separated checkboxes |
+| Current Handling | Question 3 |
+| Other Feature Ideas | Free text |
 
-## What gets submitted
+## Volume (100–200 responses)
 
-| Field | Description |
-|-------|-------------|
-| `name` | Required |
-| `location_country` | US, Germany, UK, Canada, UAE, Ireland, or Others |
-| `location` | Country name (or `Others: <country>` when applicable) |
-| `concierge_interest` | Yes / No / Maybe |
-| `features` | Selected feature checkboxes |
-| `current_handling` | How elder-care needs are handled today |
-| `other_features` | Optional free text |
+Google Sheets handles this easily on a free Google account. No Formspree limits.
